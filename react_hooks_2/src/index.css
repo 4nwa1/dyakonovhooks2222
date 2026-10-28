@@ -1,0 +1,24 @@
+body { margin: 0; font-family: system-ui, sans-serif; }
+.app { min-height: 100vh; display: flex; justify-content: center; padding: 40px 16px; box-sizing: border-box; background: #eef0ff; color: #111; }
+.app.dark { background: #14142b; color: #eee; }
+.card { width: 100%; max-width: 560px; background: #fff; border-radius: 16px; padding: 24px; height: fit-content; box-shadow: 0 8px 30px rgba(0,0,0,.08); }
+.app.dark .card { background: #1f1f3d; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.top h1 { margin: 0; font-size: 24px; }
+.actions { display: flex; gap: 8px; }
+form { display: flex; gap: 8px; margin: 16px 0; }
+form input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #111; }
+.app.dark form input { background: #2a2a4d; color: #eee; border-color: #444; }
+button { padding: 8px 14px; border-radius: 8px; border: 1px solid #ccc; background: #fff; color: #111; cursor: pointer; }
+.app.dark button { background: #2a2a4d; color: #eee; border-color: #444; }
+form button { background: #6c63ff; color: #fff; border: none; }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; }
+.app .tabs button.active { background: #6c63ff; color: #fff; border-color: #6c63ff; }
+.muted { opacity: .6; font-size: 13px; }
+ul { list-style: none; padding: 0; }
+li { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 8px; }
+.app.dark li { border-color: #444; }
+li span { flex: 1; }
+li.done span { text-decoration: line-through; opacity: .6; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }

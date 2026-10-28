@@ -1,0 +1,87 @@
+import { useReducer, useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import { tasksReducer } from './tasksReducer.js';
+import { AddTaskForm } from './components/AddTaskForm.jsx';
+import { TaskList } from './components/TaskList.jsx';
+import { ThemeToggle } from './components/ThemeToggle.jsx';
+import { LanguageToggle } from './components/LanguageToggle.jsx';
+import { useTheme } from './ThemeContext.jsx';
+import { useLanguage } from './LanguageContext.jsx';
+
+export default function App() {
+  const { theme } = useTheme();
+  const { lang } = useLanguage();
+  const [tasks, dispatch] = useReducer(tasksReducer, []);
+  const [filter, setFilter] = useState('all');
+  const searchRef = useRef(null);
+
+  const handleAdd = useCallback((text) => {
+    dispatch({ type: 'add', task: { id: Date.now(), text, done: false } });
+  }, []);
+  const handleToggle = useCallback((id) => dispatch({ type: 'toggle', id }), []);
+  const handleRemove = useCallback((id) => dispatch({ type: 'remove', id }), []);
+  const handleRename = useCallback((id, text) => dispatch({ type: 'rename', id, text }), []);
+
+  const visibleTasks = useMemo(() => {
+    if (filter === 'done') return tasks.filter((t) => t.done);
+    if (filter === 'active') return tasks.filter((t) => !t.done);
+    return tasks;
+  }, [tasks, filter]);
+
+  const doneCount = useMemo(() => tasks.filter((t) => t.done).length, [tasks]);
+
+  const percent = useMemo(
+    () => (tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0),
+    [tasks.length, doneCount]
+  );
+
+  useEffect(() => {
+    function onKey(e) {
+      const tag = document.activeElement.tagName;
+      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        searchRef.current.focus();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <div className={'app ' + theme}>
+      <div className="card">
+        <header className="top">
+          <h1>{lang === 'ru' ? 'Менеджер задач' : 'Task Manager'}</h1>
+          <div className="actions">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
+        </header>
+
+        <AddTaskForm onAdd={handleAdd} inputRef={searchRef} />
+
+        <div className="tabs">
+          {[['all', 'Все'], ['active', 'Активные'], ['done', 'Готовые']].map(([key, label]) => (
+            <button
+              key={key}
+              className={filter === key ? 'active' : ''}
+              onClick={() => setFilter(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <p className="muted">
+          Всего: {tasks.length}, выполнено: {doneCount} ({percent}%)
+        </p>
+
+        <TaskList
+          tasks={visibleTasks}
+          onToggle={handleToggle}
+          onRemove={handleRemove}
+          onRename={handleRename}
+        />
+      </div>
+    </div>
+  );
+}
